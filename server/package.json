@@ -9,7 +9,18 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.3",
+    "@types/validator": "^13.12.2",
     "nodemon": "^3.1.7",
-    "ts-node": "^10.9.2" 
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.1",
+    "mongoose": "^8.8.2",
+    "socket.io": "^4.8.1",
+    "validator": "^13.12.0"
   }
 }
