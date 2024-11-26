@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import * as usersController from "./controllers/users";
 import bodyParser from "body-parser";
 import authMiddleware from "./middlewares/auth";
+import cors from "cors";
 
 // Create an instance of an Express application
 const app = express();
@@ -15,6 +16,8 @@ const httpServer = createServer(app);
 
 // Create a Socket.IO server instance to handle WebSocket communication
 const io = new Server(httpServer);
+
+app.use(cors());
 
 // to use body as json
 app.use(bodyParser.json());
@@ -28,7 +31,7 @@ app.post("/api/users", usersController.register);
 
 app.post("/api/users/login", usersController.login);
 
-app.get('/api/user', authMiddleware, usersController.currentUser)
+app.get("/api/user", authMiddleware, usersController.currentUser);
 
 io.on("connection", () => {
   console.log("connect");
