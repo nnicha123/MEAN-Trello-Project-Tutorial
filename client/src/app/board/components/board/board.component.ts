@@ -4,10 +4,11 @@ import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { BoardService } from '../../service/board.service';
 import { combineLatest, filter, map, Observable } from 'rxjs';
 import { BoardsInterface } from '../../../shared/types/boards.interface';
-import { SocketService } from '../../../shared/services/socket.service';
-import { SocketEventsEnum } from '../../../shared/types/socketEvents.enum';
 import { ColumnsService } from '../../../shared/services/columns.service';
 import { ColumnInterface } from '../../../shared/types/column.interface';
+import { ColumnInputInterface } from '../../../shared/types/columnInput.interface';
+import { SocketService } from '../../../shared/services/socket.service';
+import { SocketEventsEnum } from '../../../shared/types/socketEvents.enum';
 
 @Component({
   selector: 'board',
@@ -24,19 +25,17 @@ export class BoardComponent implements OnInit {
     private boardsService: BoardsService,
     private route: ActivatedRoute,
     private boardService: BoardService,
-    private socketService: SocketService,
     private router: Router,
-    private columnsService: ColumnsService
+    private columnsService: ColumnsService,
+    private socketService: SocketService
   ) {
     const boardId = this.route.snapshot.paramMap.get('boardId');
     if (!boardId) {
       throw new Error('Cant get boardID from url');
     }
     this.boardId = boardId;
-    // Filter out null
-    // this.board$ = this.boardService.board$.pipe(filter(Boolean));
-    // this.columns$ = this.boardService.columns$;
     this.data$ = combineLatest([
+      // Filter out null from boards
       this.boardService.board$.pipe(filter(Boolean)),
       this.boardService.columns$,
     ]).pipe(
@@ -48,9 +47,7 @@ export class BoardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.socketService.emit(SocketEventsEnum.boardsJoin, {
-      boardId: this.boardId,
-    });
+    this.columnsService.joinBoard(this.boardId);
     this.fetchData();
     this.initializeListeners();
   }
@@ -71,6 +68,19 @@ export class BoardComponent implements OnInit {
         this.boardService.leaveBoard(this.boardId);
       }
     });
+    this.socketService
+      .listen<ColumnInterface>(SocketEventsEnum.columnsCreateSucess)
+      .subscribe((column) => {
+        this.boardService.addColumn(column);
+      });
   }
 
+  createColumn(title: string): void {
+    console.log('createColumn', title);
+    const columnInput: ColumnInputInterface = {
+      title,
+      boardId: this.boardId,
+    };
+    this.columnsService.createColumn(columnInput);
+  }
 }
