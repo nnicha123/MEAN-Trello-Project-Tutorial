@@ -19,6 +19,23 @@ export const getBoards = async (
   }
 };
 
+export const getBoard = async (
+  req: ExpressRequestInterface,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.user) {
+      res.sendStatus(401);
+    } else {
+      const boards = await BoardModel.findById(req.params.boardId);
+      res.send(boards);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const createBoard = async (
   req: ExpressRequestInterface,
   res: Response,

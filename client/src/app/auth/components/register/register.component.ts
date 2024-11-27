@@ -25,19 +25,16 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    console.log('Submit', this.form.value);
     this.authService
       .register(this.form.value as RegisterRequestInterface)
       .subscribe({
         next: (currentUser) => {
-          console.log(currentUser);
           this.authService.setToken(currentUser);
           this.authService.setCurrentUser(currentUser);
           this.errorMessage = null;
           this.router.navigateByUrl('/');
         },
         error: (err: HttpErrorResponse) => {
-          console.log(err.error);
           this.errorMessage = err.error.join(', ');
         },
       });
