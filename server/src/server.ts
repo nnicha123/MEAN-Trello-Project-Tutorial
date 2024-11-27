@@ -9,6 +9,10 @@ import bodyParser from "body-parser";
 import authMiddleware from "./middlewares/auth";
 import cors from "cors";
 import { SocketEventsEnum } from "./types/socketEvents.enum";
+import jwt from "jsonwebtoken";
+import { secret } from "./config";
+import User from "./models/user";
+import { Socket } from "./types/socket.interface";
 
 // Create an instance of an Express application
 const app = express();
@@ -53,7 +57,24 @@ app.get("/api/boards/:boardId", authMiddleware, boardsController.getBoard);
 
 app.get("api/boards/");
 
-io.on("connection", (socket) => {
+io.use(async (socket: Socket, next) => {
+  try {
+    const token = (socket.handshake.auth.token as string) ?? "";
+    const data = jwt.verify(token.split(" ")[1], secret) as {
+      id: string;
+      email: string;
+    };
+    const user = await User.findById(data.id);
+
+    if (!user) {
+      return next(new Error("Authentication Error"));
+    }
+    socket.user = user;
+    next();
+  } catch (err) {
+    next(new Error("Authentication Error"));
+  }
+}).on("connection", (socket) => {
   socket.on(SocketEventsEnum.boardsJoin, (data) => {
     boardsController.joinBoard(io, socket, data);
   });

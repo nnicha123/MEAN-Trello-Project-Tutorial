@@ -5,6 +5,7 @@ import { LoginRequestInterface } from '../../types/LoginRequest.interface';
 import { CurrentUserInterface } from '../../types/currentUser.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { SocketService } from '../../../shared/services/socket.service';
 
 @Component({
   selector: 'auth-login',
@@ -17,7 +18,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private socketService: SocketService
   ) {
     this.form = this.fb.group({
       email: ['', Validators.required],
@@ -29,6 +31,7 @@ export class LoginComponent {
     this.authService.login(this.form.value as LoginRequestInterface).subscribe({
       next: (currentUser: CurrentUserInterface) => {
         this.authService.setToken(currentUser);
+        this.socketService.setupSocketConnection(currentUser);
         this.authService.setCurrentUser(currentUser);
         this.errorMessage = null;
         this.router.navigateByUrl('/');
