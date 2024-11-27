@@ -43,4 +43,9 @@ export class AuthService {
     const url = environment.apiUrl + '/users/login';
     return this.http.post<CurrentUserInterface>(url, loginRequest);
   }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    this.currentUser$.next(null);
+  }
 }
