@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'home',
@@ -9,19 +9,22 @@ import { Subscription } from 'rxjs';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   isLoggedInSubscription: Subscription | undefined;
+  unsubscribe$ = new Subject<void>();
+
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.isLoggedInSubscription = this.authService.isLoggedIn$.subscribe(
-      (isLoggedIn) => {
+    this.authService.isLoggedIn$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((isLoggedIn) => {
         if (isLoggedIn) {
           this.router.navigateByUrl('/boards');
         }
-      }
-    );
+      });
   }
 
   ngOnDestroy(): void {
-    this.isLoggedInSubscription?.unsubscribe();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
