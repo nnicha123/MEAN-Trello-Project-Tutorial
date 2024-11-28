@@ -4,4 +4,7 @@ export enum SocketEventsEnum {
   columnsCreate = "columns:create",
   columnsCreateSucess = "columns:createSuccess",
   columnsCreateFailure = "columns:createFailure",
+  tasksCreate = "tasks:create",
+  tasksCreateSucess = "tasks:createSuccess",
+  tasksCreateFailure = "tasks:createFailure",
 }
