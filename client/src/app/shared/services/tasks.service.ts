@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { TaskInterface } from '../types/tasks.interface';
 import { environment } from '../../../environment/environment';
 import { SocketService } from './socket.service';
+import { TaskInputInterface } from '../types/taskInput.interface';
+import { SocketEventsEnum } from '../types/socketEvents.enum';
 
 @Injectable()
 export class TasksService {
@@ -14,7 +16,7 @@ export class TasksService {
     return this.http.get<TaskInterface[]>(url);
   }
 
-  //   createTask(taskInput:TaskInputInterface):void{
-  //     this.
-  //   }
+  createTask(taskInput: TaskInputInterface): void {
+    this.socketService.emit(SocketEventsEnum.tasksCreate, taskInput);
+  }
 }

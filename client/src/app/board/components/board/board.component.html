@@ -10,6 +10,14 @@
       >
         {{ task.title }}
       </div>
+      <inline-form
+        class="create-task-form"
+        defaultText="Add a card"
+        [hasButton]="true"
+        buttonText="Add card"
+        inputPlaceholder="Enter a title for this card"
+        (handleSubmit)="createTask($event, column.id)"
+      ></inline-form>
     </div>
     <inline-form
       class="create-column-form"
