@@ -118,6 +118,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       .listen<void>(SocketEventsEnum.boardDeleteSuccess)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => this.router.navigateByUrl('/boards'));
+
     this.socketService
       .listen<string>(SocketEventsEnum.columnDeleteSuccess)
       .pipe(takeUntil(this.unsubscribe$))
@@ -130,6 +131,11 @@ export class BoardComponent implements OnInit, OnDestroy {
       .subscribe((updatedColumn) => {
         this.boardService.updateColumn(updatedColumn);
       });
+
+    this.socketService
+      .listen<TaskInterface>(SocketEventsEnum.tasksUpdateSuccess)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((updatedTask) => this.boardService.updateTask(updatedTask));
   }
 
   createColumn(title: string): void {
