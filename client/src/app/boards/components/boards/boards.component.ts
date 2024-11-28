@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BoardsService } from '../../../shared/services/boards.service';
 import { BoardsInterface } from '../../../shared/types/boards.interface';
+import { SocketService } from '../../../shared/services/socket.service';
 
 @Component({
   selector: 'boards',
