@@ -136,6 +136,11 @@ export class BoardComponent implements OnInit, OnDestroy {
       .listen<TaskInterface>(SocketEventsEnum.tasksUpdateSuccess)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((updatedTask) => this.boardService.updateTask(updatedTask));
+
+    this.socketService
+      .listen<string>(SocketEventsEnum.tasksDeleteSuccess)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((taskId) => this.boardService.deleteTask(taskId));
   }
 
   createColumn(title: string): void {

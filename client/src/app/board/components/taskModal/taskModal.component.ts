@@ -14,6 +14,8 @@ import { TaskInterface } from '../../../shared/types/tasks.interface';
 import { ColumnInterface } from '../../../shared/types/column.interface';
 import { FormBuilder } from '@angular/forms';
 import { TasksService } from '../../../shared/services/tasks.service';
+import { SocketService } from '../../../shared/services/socket.service';
+import { SocketEventsEnum } from '../../../shared/types/socketEvents.enum';
 
 @Component({
   selector: 'task-modal',
@@ -35,7 +37,8 @@ export class TaskModalComponent implements OnDestroy {
     private router: Router,
     private boardService: BoardService,
     private fb: FormBuilder,
-    private tasksService: TasksService
+    private tasksService: TasksService,
+    private socketService: SocketService
   ) {
     const boardId = this.route.parent?.snapshot.paramMap.get('boardId');
     const taskId = this.route.snapshot.paramMap.get('taskId');
@@ -71,6 +74,11 @@ export class TaskModalComponent implements OnDestroy {
           this.tasksService.updateTask(this.boardId, task.id, { columnId });
         }
       });
+
+    this.socketService
+      .listen<string>(SocketEventsEnum.tasksDeleteSuccess)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => this.goToBoard());
   }
 
   ngOnDestroy(): void {
@@ -90,5 +98,9 @@ export class TaskModalComponent implements OnDestroy {
     this.tasksService.updateTask(this.boardId, this.taskId, {
       description: taskDescription,
     });
+  }
+
+  deleteTask(): void {
+    this.tasksService.deleteTask(this.boardId, this.taskId);
   }
 }
