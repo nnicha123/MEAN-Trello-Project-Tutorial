@@ -97,7 +97,10 @@ export const updateBoard = async (
       data.fields,
       { new: true }
     );
-    io.to(data.boardId).emit(SocketEventsEnum.boardsUpdateSucess, updatedBoard);
+    io.to(data.boardId).emit(
+      SocketEventsEnum.boardsUpdateSuccess,
+      updatedBoard
+    );
   } catch (err) {
     socket.emit(SocketEventsEnum.boardsUpdateFailure, getErrorMessage(err));
   }
@@ -117,7 +120,7 @@ export const deleteBoard = async (
       return;
     }
     await BoardModel.deleteOne({ _id: data.boardId });
-    io.to(data.boardId).emit(SocketEventsEnum.boardDeleteSucess);
+    io.to(data.boardId).emit(SocketEventsEnum.boardDeleteSuccess);
   } catch (err) {
     socket.emit(SocketEventsEnum.boardDeleteFailure, getErrorMessage(err));
   }

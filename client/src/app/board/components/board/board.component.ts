@@ -80,25 +80,30 @@ export class BoardComponent implements OnInit {
       }
     });
     this.socketService
-      .listen<ColumnInterface>(SocketEventsEnum.columnsCreateSucess)
+      .listen<ColumnInterface>(SocketEventsEnum.columnsCreateSuccess)
       .subscribe((column) => {
         this.boardService.addColumn(column);
       });
     this.socketService
-      .listen<TaskInterface>(SocketEventsEnum.tasksCreateSucess)
+      .listen<TaskInterface>(SocketEventsEnum.tasksCreateSuccess)
       .subscribe((task) => this.boardService.addTask(task));
 
     this.socketService
-      .listen<BoardsInterface>(SocketEventsEnum.boardsUpdateSucess)
+      .listen<BoardsInterface>(SocketEventsEnum.boardsUpdateSuccess)
       .subscribe((board) => this.boardService.updateBoard(board));
 
     this.socketService
-      .listen<void>(SocketEventsEnum.boardDeleteSucess)
+      .listen<void>(SocketEventsEnum.boardDeleteSuccess)
       .subscribe(() => this.router.navigateByUrl('/boards'));
     this.socketService
-      .listen<string>(SocketEventsEnum.columnDeleteSucess)
+      .listen<string>(SocketEventsEnum.columnDeleteSuccess)
       .subscribe((columnId) => {
         this.boardService.deleteColumn(columnId);
+      });
+    this.socketService
+      .listen<ColumnInterface>(SocketEventsEnum.columnUpdateSuccess)
+      .subscribe((updatedColumn) => {
+        this.boardService.updateColumn(updatedColumn);
       });
   }
 
@@ -136,5 +141,11 @@ export class BoardComponent implements OnInit {
 
   deleteColumn(columnId: string): void {
     this.columnsService.deleteColumn(this.boardId, columnId);
+  }
+
+  updateColumnName(columnName: string, columnId: string): void {
+    this.columnsService.updateColumn(this.boardId, columnId, {
+      title: columnName,
+    });
   }
 }

@@ -97,15 +97,18 @@ io.use(async (socket: Socket, next) => {
   socket.on(SocketEventsEnum.tasksCreate, (data) => {
     tasksController.createTask(io, socket, data);
   });
-  socket.on(SocketEventsEnum.boardsUpdate, data => {
-    boardsController.updateBoard(io,socket,data)
-  })
-  socket.on(SocketEventsEnum.boardDelete, data => {
-    boardsController.deleteBoard(io,socket,data)
-  })
-  socket.on(SocketEventsEnum.columnDelete, data => {
-    columnsController.deleteColumn(io,socket,data)
-  })
+  socket.on(SocketEventsEnum.boardsUpdate, (data) => {
+    boardsController.updateBoard(io, socket, data);
+  });
+  socket.on(SocketEventsEnum.boardDelete, (data) => {
+    boardsController.deleteBoard(io, socket, data);
+  });
+  socket.on(SocketEventsEnum.columnDelete, (data) => {
+    columnsController.deleteColumn(io, socket, data);
+  });
+  socket.on(SocketEventsEnum.columnUpdate, (data) => {
+    columnsController.updateColumn(io, socket, data);
+  });
 });
 
 mongoose.connect("mongodb://localhost:27017/eltrello").then(() => {

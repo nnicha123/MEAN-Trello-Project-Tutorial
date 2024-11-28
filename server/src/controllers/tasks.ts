@@ -42,7 +42,7 @@ export const createTask = async (
         columnId: data.columnId,
       });
       const savedTask = await newTask.save();
-      io.to(data.boardId).emit(SocketEventsEnum.tasksCreateSucess, savedTask);
+      io.to(data.boardId).emit(SocketEventsEnum.tasksCreateSuccess, savedTask);
     }
   } catch (err) {
     socket.emit(SocketEventsEnum.columnsCreateFailure, getErrorMessage(err));
