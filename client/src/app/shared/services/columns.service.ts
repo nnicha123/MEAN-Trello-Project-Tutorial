@@ -20,7 +20,14 @@ export class ColumnsService {
     return this.http.get<ColumnInterface[]>(url);
   }
 
-  createColumn(columnInput: ColumnInputInterface) {
+  createColumn(columnInput: ColumnInputInterface): void {
     this.socketService.emit(SocketEventsEnum.columnsCreate, columnInput);
+  }
+
+  deleteColumn(boardId: string, columnId: string): void {
+    this.socketService.emit(SocketEventsEnum.columnDelete, {
+      boardId,
+      columnId,
+    });
   }
 }

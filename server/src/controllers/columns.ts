@@ -49,3 +49,26 @@ export const createColumn = async (
     socket.emit(SocketEventsEnum.columnsCreateFailure, getErrorMessage(err));
   }
 };
+
+export const deleteColumn = async (
+  io: Server,
+  socket: Socket,
+  data: { boardId: string; columnId: string }
+) => {
+  try {
+    if (!socket.user) {
+      socket.emit(
+        SocketEventsEnum.columnDeleteFailure,
+        "User is not authorized"
+      );
+      return;
+    }
+    await ColumnModel.deleteOne({ _id: data.columnId });
+    io.to(data.boardId).emit(
+      SocketEventsEnum.columnDeleteSucess,
+      data.columnId
+    );
+  } catch (err) {
+    socket.emit(SocketEventsEnum.columnDeleteFailure, getErrorMessage(err));
+  }
+};
