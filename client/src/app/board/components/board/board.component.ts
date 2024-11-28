@@ -9,6 +9,8 @@ import { ColumnInterface } from '../../../shared/types/column.interface';
 import { ColumnInputInterface } from '../../../shared/types/columnInput.interface';
 import { SocketService } from '../../../shared/services/socket.service';
 import { SocketEventsEnum } from '../../../shared/types/socketEvents.enum';
+import { TaskInterface } from '../../../shared/types/tasks.interface';
+import { TasksService } from '../../../shared/services/tasks.service';
 
 @Component({
   selector: 'board',
@@ -19,6 +21,7 @@ export class BoardComponent implements OnInit {
   data$: Observable<{
     board: BoardsInterface;
     columns: ColumnInterface[];
+    tasks: TaskInterface[];
   }>;
 
   constructor(
@@ -27,7 +30,8 @@ export class BoardComponent implements OnInit {
     private boardService: BoardService,
     private router: Router,
     private columnsService: ColumnsService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private tasksService: TasksService
   ) {
     const boardId = this.route.snapshot.paramMap.get('boardId');
     if (!boardId) {
@@ -38,10 +42,12 @@ export class BoardComponent implements OnInit {
       // Filter out null from boards
       this.boardService.board$.pipe(filter(Boolean)),
       this.boardService.columns$,
+      this.boardService.tasks$,
     ]).pipe(
-      map(([board, columns]) => ({
+      map(([board, columns, tasks]) => ({
         board,
         columns,
+        tasks,
       }))
     );
   }
@@ -59,6 +65,10 @@ export class BoardComponent implements OnInit {
     this.columnsService
       .getColumns(this.boardId)
       .subscribe((columns) => this.boardService.setColumns(columns));
+
+    this.tasksService
+      .getTasks(this.boardId)
+      .subscribe((tasks) => this.boardService.setTasks(tasks));
   }
 
   initializeListeners(): void {
@@ -82,5 +92,9 @@ export class BoardComponent implements OnInit {
       boardId: this.boardId,
     };
     this.columnsService.createColumn(columnInput);
+  }
+
+  getTasksByColumn(columnId: string, tasks: TaskInterface[]): TaskInterface[] {
+    return tasks.filter((task) => task.columnId === columnId);
   }
 }
